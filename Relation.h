@@ -117,6 +117,18 @@ public:
         return tuples;
     }
 
+    Relation join(const Relation& right) {
+        const Relation &left = *this;
+        Relation result;
+        for (const Tuple &leftTuple: left.tuples) {
+            cout << "left tuple: " << leftTuple.toString(left.scheme) << endl;
+            for (const Tuple &rightTuple: right.tuples) {
+                cout << "right tuple: " << rightTuple.toString(right.scheme) << endl;
+            }
+        }
+        return result;
+    }
+
     static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
         // Loop over the left scheme and tuple
@@ -137,7 +149,17 @@ public:
             return true;
         }
     }
-};
 
-//};
+//        Relation joinSchemes; {
+        // combines the schemes for the left and right relations into single scheme
+        // for the result relation.
+//        }
+
+//        Relation joinTuples; {
+        // combines tuples from the left and right relations into single tuple
+        // for the result relation.
+//        }
+        // Your 'join' function can call these functions as well as the 'joinable' function
+        // to produce the relation that results from the join.
+};
 #endif //CS236PROJECT3_RELATIONALDATABASE_RELATION_H
