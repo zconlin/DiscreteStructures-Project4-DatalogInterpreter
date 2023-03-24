@@ -98,6 +98,7 @@ public:
         return result;
     };
 
+
     // Rename - Will take in a scheme and rename the columns of the relation
     // Create a new scheme where we've changed the names of the columns
     // Add back in the same tuples into a relation with the new scheme
@@ -119,35 +120,17 @@ public:
     Relation join(const Relation& right) {
         const Relation &left = *this;
         Relation result;
-        // Make schemes for the new relation
-
         for (const Tuple &leftTuple: left.tuples) {
             cout << "left tuple: " << leftTuple.toString(left.scheme) << endl;
             for (const Tuple &rightTuple: right.tuples) {
-                if (joinable(left.scheme, right.scheme, leftTuple, rightTuple)) {
-                    // join the tuples
-                    //joinTuples(leftTuple, rightTuple);
-                    joinIfJoinable(left.scheme, right.scheme, leftTuple, rightTuple);
-                    // this returns a tuple, add it to the new relation (with the new combined scheme)
-                }
+                cout << "right tuple: " << rightTuple.toString(right.scheme) << endl;
             }
         }
-//        foreach (const Tuple &leftTuple: left.tuples) {
-//            foreach(
-//            const Tuple &rightTuple: right.tuples) {
-//                if (joinable(left.scheme, right.scheme, leftTuple, rightTuple)) {
-//                    Tuple newTuple = leftTuple;
-//                    newTuple.insert(newTuple.end(), rightTuple.begin(), rightTuple.end());
-//                    result.addTuple(newTuple);
-//                }
-//            }
         return result;
     }
 
     static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
-        bool tupleStatus = true;
-        bool schemeStatus = false;
         // Loop over the left scheme and tuple
         for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
             const string& leftName = leftScheme.at(leftIndex);
@@ -158,56 +141,25 @@ public:
                 const string& rightName = rightScheme.at(rightIndex);
                 const string& rightValue = rightTuple.at(rightIndex);
                 cout << "right name: " << rightName << " value: " << rightValue << endl;
-                if (leftName == rightName) {
-                    schemeStatus = true;
-                    if (leftValue != rightValue) {
-                        tupleStatus = false;
-                    }
-                }
             }
         }
-        return tupleStatus && schemeStatus;
+        if (leftScheme.back() == rightScheme.front()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-//        Tuple joinTuples(const Tuple &leftTuple, const Tuple &rightTuple) {
-//         // combines tuples from the left and right relations into single tuple
-//         // for the result relation.
-//            Tuple newTuple;
-//            newTuple.insert(newTuple.end(), leftTuple.begin(), leftTuple.end());
-//
-//         return newTuple;
-//        };
-         // Your 'join' function can call these functions as well as the 'joinable' function
-         // to produce the relation that results from the join.
+//        Relation joinSchemes; {
+        // combines the schemes for the left and right relations into single scheme
+        // for the result relation.
+//        }
 
-         static Tuple joinIfJoinable(const Scheme& leftScheme, const Scheme& rightScheme,
-                              const Tuple& leftTuple, const Tuple& rightTuple) {
-             Tuple newTuple;
-             bool tupleStatus = true;
-             bool schemeStatus = false;
-             // Loop over the left scheme and tuple
-             for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
-                 const string& leftName = leftScheme.at(leftIndex);
-                 const string& leftValue = leftTuple.at(leftIndex);
-                 cout << "left name: " << leftName << " value: " << leftValue << endl;
-                 // Loop over the right scheme and tuple
-                 for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
-                     const string& rightName = rightScheme.at(rightIndex);
-                     const string& rightValue = rightTuple.at(rightIndex);
-                     cout << "right name: " << rightName << " value: " << rightValue << endl;
-                     if (leftName == rightName) {
-                         schemeStatus = true;
-                         if (leftValue != rightValue) {
-                             tupleStatus = false;
-                         }
-                     }
-                 }
-             }
-             return newTuple;
-         }
-
-//        Relation union() {
-//
-//    }
+//        Relation joinTuples; {
+        // combines tuples from the left and right relations into single tuple
+        // for the result relation.
+//        }
+        // Your 'join' function can call these functions as well as the 'joinable' function
+        // to produce the relation that results from the join.
 };
 #endif //CS236PROJECT4_DATALOGINTERPRETER_RELATION_H

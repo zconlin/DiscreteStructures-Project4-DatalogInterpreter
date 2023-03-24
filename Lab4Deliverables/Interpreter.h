@@ -63,16 +63,9 @@ public:
         return result;
     }
 
-    // call this after schemes and facts, but before queries
     void evaluateAllQueries() {
         for (auto &query : dl.Queries) {
             evaluateQuery(query);
-        }
-    }
-
-    void evaluateAllFacts() {
-        for (auto &fact : dl.Facts) {
-            evaluateFact(fact);
         }
     }
 

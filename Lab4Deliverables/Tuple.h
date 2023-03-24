@@ -10,7 +10,6 @@
 
 class Tuple : public vector<string> {
 public:
-    Tuple() { }
     Tuple(vector<string> values) : vector<string>(values) { }
 
     string toString(const Scheme& scheme) const {
