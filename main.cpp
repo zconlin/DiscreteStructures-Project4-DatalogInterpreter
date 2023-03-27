@@ -12,27 +12,54 @@
 #include <iostream>
 #include <fstream>
 
-int main() { // Part 2
-    Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
-    vector<string> studentValues[] = {
-            {"'42'", "'Ann'", "'CS'"},
-            {"'64'", "'Ned'", "'EE'"},
-    };
-    studentRelation.join(studentRelation);
+int main (int argc, char* argv[]) {
+    ifstream f;
+    f.open(argv[1]);
 
-    Relation courseRelation("courses", Scheme( {"ID", "Course"} ));
-    vector<string> courseValues[] = {
-            {"'42'", "'CS 100'"},
-            {"'32'", "'CS 232'"},
-    };
+    string content((istreambuf_iterator<char>(f)), (istreambuf_iterator<char>()));
 
-    for (auto& value : studentValues)
-        studentRelation.addTuple(Tuple(value));
-    for (auto& value : courseValues)
-        courseRelation.addTuple(Tuple(value));
+    Scanner s = Scanner(content);
+    vector<Token> t = s.scanLoop();
 
-    studentRelation.join(courseRelation);
+    Parser p = Parser(t);
+
+    try {
+        DatalogProgram dp = p.datalogProgram();
+        Interpreter i = Interpreter(dp);
+        cout << "Rule Evaluation" << endl;
+        i.evaluateAllFacts();
+
+        cout << "Query Evaluation" << endl;
+        i.evaluateAllQueries();
+    }
+    catch (Token error) {
+//        cout << "Failure!" << endl;
+//        cout << "  " << error.toString() << endl;
+    }
+    return 0;
 }
+
+//int main() { // Part 2
+//    Relation studentRelation("students", Scheme( {"ID", "Name", "Major"} ));
+//    vector<string> studentValues[] = {
+//            {"'42'", "'Ann'", "'CS'"},
+//            {"'64'", "'Ned'", "'EE'"},
+//    };
+//    studentRelation.join(studentRelation);
+//
+//    Relation courseRelation("courses", Scheme( {"ID", "Course"} ));
+//    vector<string> courseValues[] = {
+//            {"'42'", "'CS 100'"},
+//            {"'32'", "'CS 232'"},
+//    };
+//
+//    for (auto& value : studentValues)
+//        studentRelation.addTuple(Tuple(value));
+//    for (auto& value : courseValues)
+//        courseRelation.addTuple(Tuple(value));
+//
+//    studentRelation.join(courseRelation);
+//}
 
 //int main() { // Part 1
 //

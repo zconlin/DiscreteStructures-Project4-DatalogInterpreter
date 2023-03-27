@@ -12,7 +12,8 @@ class Scheme : public vector<string> {
 
 public:
 
-    Scheme(vector<string> names) : vector<string>(names) {}
+    Scheme() { }
+    Scheme(vector<string> names) : vector<string>(names) { }
 
     Scheme insertScheme(const Scheme &leftScheme, const Scheme &rightScheme) {
         set<string> values;

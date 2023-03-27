@@ -35,6 +35,10 @@ public:
             relations[scheme.getName()] = relation;
         }
     }
+
+    int getSize() {
+        return relations.size();
+    }
 };
 
 #endif //CS236PROJECT4_DATALOGINTERPRETER_DATABASE_H
