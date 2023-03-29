@@ -54,7 +54,7 @@ public:
                 }
                 result = result.project(returnScheme);
                 result = result.rename(Scheme(ordering));
-//                result = result.join();
+                result = result.join(result);
                 cout << "Yes(" << result.getTuples().size() << ")" << endl;
                 cout << result.toString();
             } else {

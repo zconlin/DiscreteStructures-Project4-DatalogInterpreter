@@ -126,23 +126,25 @@ public:
             for (const Tuple &rightTuple: right.tuples) {
                 if (joinable(left.scheme, right.scheme, leftTuple, rightTuple)) {
                     // join the tuples
-                    //joinTuples(leftTuple, rightTuple);
-                    joinIfJoinable(left.scheme, right.scheme, leftTuple, rightTuple);
+                    joinTuples(leftTuple, rightTuple);
+//                    joinIfJoinable(left.scheme, right.scheme, leftTuple, rightTuple);
                     // this returns a tuple, add it to the new relation (with the new combined scheme)
+
                 }
             }
         }
-//        foreach (const Tuple &leftTuple: left.tuples) {
-//            foreach(
-//            const Tuple &rightTuple: right.tuples) {
+    }
+//        for (const Tuple &leftTuple: left.tuples) {
+//            for (const Tuple &rightTuple: right.tuples) {
 //                if (joinable(left.scheme, right.scheme, leftTuple, rightTuple)) {
 //                    Tuple newTuple = leftTuple;
 //                    newTuple.insert(newTuple.end(), rightTuple.begin(), rightTuple.end());
 //                    result.addTuple(newTuple);
 //                }
 //            }
-        return result;
-    }
+//        }
+//        return result;
+//    }
 
     static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
                          const Tuple& leftTuple, const Tuple& rightTuple) {
@@ -169,14 +171,14 @@ public:
         return tupleStatus && schemeStatus;
     }
 
-//        Tuple joinTuples(const Tuple &leftTuple, const Tuple &rightTuple) {
-//         // combines tuples from the left and right relations into single tuple
-//         // for the result relation.
-//            Tuple newTuple;
-//            newTuple.insert(newTuple.end(), leftTuple.begin(), leftTuple.end());
-//
-//         return newTuple;
-//        };
+        Tuple joinTuples(const Tuple &leftTuple, const Tuple &rightTuple) {
+         // combines tuples from the left and right relations into single tuple
+         // for the result relation.
+            Tuple newTuple;
+            newTuple.insert(newTuple.end(), leftTuple.begin(), leftTuple.end());
+
+         return newTuple;
+        };
          // Your 'join' function can call these functions as well as the 'joinable' function
          // to produce the relation that results from the join.
 
@@ -206,7 +208,7 @@ public:
              return newTuple;
          }
 
-//        Relation union() {
+//        Relation unite() { // union
 //
 //    }
 };
