@@ -26,10 +26,8 @@ int main (int argc, char* argv[]) {
     try {
         DatalogProgram dp = p.datalogProgram();
         Interpreter i = Interpreter(dp);
-        cout << "Rule Evaluation" << endl;
-        i.evaluateAllFacts();
 
-        cout << "Query Evaluation" << endl;
+        i.evaluateAllRules();
         i.evaluateAllQueries();
     }
     catch (Token error) {

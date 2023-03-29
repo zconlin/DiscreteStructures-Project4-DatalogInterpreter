@@ -7,6 +7,7 @@
 
 #include <set>
 #include <string>
+#include <algorithm>
 #include "Scheme.h"
 #include "Tuple.h"
 
@@ -30,6 +31,7 @@ public:
     set<Tuple> tuples;
 
     Relation() = default;
+
     Relation(const string &name, const Scheme &scheme)
             : name(name), scheme(scheme) {}
 
@@ -112,27 +114,38 @@ public:
         this->tuples.insert(t.begin(), t.end());
     }
 
-    set <Tuple> &getTuples() {
+    set<Tuple> &getTuples() {
         return tuples;
     }
 
-    Relation join(const Relation& right) {
+    Relation join(const Relation &right) {
         const Relation &left = *this;
-        Relation result;
         // Make schemes for the new relation
+        Scheme newScheme = left.scheme;
+        for (auto &rightHeader: right.scheme) {
+            if (find(left.scheme.begin(), left.scheme.end(), rightHeader) == left.scheme.end()) {
+                newScheme.push_back(rightHeader);
+            }
+        }
 
+        Relation result = Relation("joinedRelation", newScheme);
         for (const Tuple &leftTuple: left.tuples) {
-            cout << "left tuple: " << leftTuple.toString(left.scheme) << endl;
+//            cout << "left tuple: " << leftTuple.toString(left.scheme) << endl;
             for (const Tuple &rightTuple: right.tuples) {
                 if (joinable(left.scheme, right.scheme, leftTuple, rightTuple)) {
                     // join the tuples
-                    joinTuples(leftTuple, rightTuple);
-//                    joinIfJoinable(left.scheme, right.scheme, leftTuple, rightTuple);
+                    Tuple resultTuple = leftTuple;
+                    for (unsigned int i = 0; i < right.scheme.size(); i++) {
+                        if (find(left.scheme.begin(), left.scheme.end(), right.scheme.at(i)) == left.scheme.end()) {
+                            resultTuple.push_back(rightTuple.at(i));
+                        }
+                    }
                     // this returns a tuple, add it to the new relation (with the new combined scheme)
-
+                    result.addTuple(resultTuple);
                 }
             }
         }
+        return result;
     }
 //        for (const Tuple &leftTuple: left.tuples) {
 //            for (const Tuple &rightTuple: right.tuples) {
@@ -146,20 +159,20 @@ public:
 //        return result;
 //    }
 
-    static bool joinable(const Scheme& leftScheme, const Scheme& rightScheme,
-                         const Tuple& leftTuple, const Tuple& rightTuple) {
+    static bool joinable(const Scheme &leftScheme, const Scheme &rightScheme,
+                         const Tuple &leftTuple, const Tuple &rightTuple) {
         bool tupleStatus = true;
         bool schemeStatus = false;
         // Loop over the left scheme and tuple
         for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
-            const string& leftName = leftScheme.at(leftIndex);
-            const string& leftValue = leftTuple.at(leftIndex);
-            cout << "left name: " << leftName << " value: " << leftValue << endl;
+            const string &leftName = leftScheme.at(leftIndex);
+            const string &leftValue = leftTuple.at(leftIndex);
+//            cout << "left name: " << leftName << " value: " << leftValue << endl;
             // Loop over the right scheme and tuple
             for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
-                const string& rightName = rightScheme.at(rightIndex);
-                const string& rightValue = rightTuple.at(rightIndex);
-                cout << "right name: " << rightName << " value: " << rightValue << endl;
+                const string &rightName = rightScheme.at(rightIndex);
+                const string &rightValue = rightTuple.at(rightIndex);
+//                cout << "right name: " << rightName << " value: " << rightValue << endl;
                 if (leftName == rightName) {
                     schemeStatus = true;
                     if (leftValue != rightValue) {
@@ -171,45 +184,56 @@ public:
         return tupleStatus && schemeStatus;
     }
 
-        Tuple joinTuples(const Tuple &leftTuple, const Tuple &rightTuple) {
-         // combines tuples from the left and right relations into single tuple
-         // for the result relation.
-            Tuple newTuple;
-            newTuple.insert(newTuple.end(), leftTuple.begin(), leftTuple.end());
+    Tuple joinTuples(const Tuple &leftTuple, const Tuple &rightTuple) {
+        // combines tuples from the left and right relations into single tuple
+        // for the result relation.
+        Tuple newTuple;
+        newTuple.insert(newTuple.end(), leftTuple.begin(), leftTuple.end());
+        return newTuple;
+    };
+    // Your 'join' function can call these functions as well as the 'joinable' function
+    // to produce the relation that results from the join.
 
-         return newTuple;
-        };
-         // Your 'join' function can call these functions as well as the 'joinable' function
-         // to produce the relation that results from the join.
-
-         static Tuple joinIfJoinable(const Scheme& leftScheme, const Scheme& rightScheme,
-                              const Tuple& leftTuple, const Tuple& rightTuple) {
-             Tuple newTuple;
-             bool tupleStatus = true;
-             bool schemeStatus = false;
-             // Loop over the left scheme and tuple
-             for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
-                 const string& leftName = leftScheme.at(leftIndex);
-                 const string& leftValue = leftTuple.at(leftIndex);
-                 cout << "left name: " << leftName << " value: " << leftValue << endl;
-                 // Loop over the right scheme and tuple
-                 for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
-                     const string& rightName = rightScheme.at(rightIndex);
-                     const string& rightValue = rightTuple.at(rightIndex);
-                     cout << "right name: " << rightName << " value: " << rightValue << endl;
-                     if (leftName == rightName) {
-                         schemeStatus = true;
-                         if (leftValue != rightValue) {
-                             tupleStatus = false;
-                         }
-                     }
-                 }
-             }
-             return newTuple;
-         }
-
-//        Relation unite() { // union
-//
+//    static Tuple joinIfJoinable(const Scheme &leftScheme, const Scheme &rightScheme,
+//                                const Tuple &leftTuple, const Tuple &rightTuple) {
+//        Tuple newTuple;
+//        bool tupleStatus = true;
+//        bool schemeStatus = false;
+//        // Loop over the left scheme and tuple
+//        for (unsigned leftIndex = 0; leftIndex < leftScheme.size(); leftIndex++) {
+//            const string &leftName = leftScheme.at(leftIndex);
+//            const string &leftValue = leftTuple.at(leftIndex);
+//            cout << "left name: " << leftName << " value: " << leftValue << endl;
+//            // Loop over the right scheme and tuple
+//            for (unsigned rightIndex = 0; rightIndex < rightScheme.size(); rightIndex++) {
+//                const string &rightName = rightScheme.at(rightIndex);
+//                const string &rightValue = rightTuple.at(rightIndex);
+//                cout << "right name: " << rightName << " value: " << rightValue << endl;
+//                if (leftName == rightName) {
+//                    schemeStatus = true;
+//                    if (leftValue != rightValue) {
+//                        tupleStatus = false;
+//                    }
+//                }
+//            }
+//        }
+//        return newTuple;
 //    }
+
+
+//     Relation unite(const Relation &right) {
+//        for(auto &x : right.tuples)
+//            if(this->tuples.find(x) == this->tuples.end())
+//                this->tuples.insert(x);
+//            else {
+//                cout << endl << "  ";
+//                for (unsigned i = 0; i < x.size(); i++) {
+//                    cout << this->scheme.at(i) << "=" << x.at(i);
+//                    if(i != x.size() - 1)
+//                        cout << ", ";
+//                }
+//            }
+//        }
+//    };
 };
 #endif //CS236PROJECT4_DATALOGINTERPRETER_RELATION_H
